@@ -32,9 +32,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
                 .antMatchers("/api/**").hasRole(STUDENT.name())
-                .antMatchers(POST, "/management/api/**").hasRole(ADMIN.name())
-                .antMatchers(PUT, "/management/api/**").hasRole(ADMIN.name())
-                .antMatchers(DELETE, "/management/api/**").hasRole(ADMIN.name())
+                .antMatchers(POST, "/management/api/**").hasAuthority(STUDENT_WRITE.name())
+                .antMatchers(PUT, "/management/api/**").hasAuthority(STUDENT_WRITE.name())
+                .antMatchers(DELETE, "/management/api/**").hasAuthority(STUDENT_WRITE.name())
                 .antMatchers(GET, "/management/api/**").hasAnyRole(ADMIN.name(), ADMIN_TRAINEE.name())
                 .anyRequest()
                 .authenticated()
@@ -54,13 +54,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         final UserDetails admin = User.builder()
                 .username("Admin")
                 .password(passwordEncoder.encode("password"))
-                .roles(ADMIN.name())
+                .authorities(ADMIN.getGrantedAuthorities())
                 .build();
 
         final UserDetails jane = User.builder()
                 .username("jane")
                 .password(passwordEncoder.encode("password"))
-                .roles(ADMIN_TRAINEE.name())
+                .authorities(ADMIN_TRAINEE.getGrantedAuthorities())
                 .build();
         return new InMemoryUserDetailsManager(hewang, admin, jane);
     }
